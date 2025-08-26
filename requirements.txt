@@ -1,0 +1,39 @@
+# Core CLI Framework
+click==8.1.7
+
+# Process Management (using standard library)
+# subprocess - standard library
+# asyncio - standard library
+
+# File Processing
+python-pptx==1.0.2
+openpyxl==3.1.5
+pandas==2.2.3
+python-docx==1.1.2
+PyPDF2==3.0.1
+markdown==3.7
+chardet==5.2.0
+
+# Configuration & Data Management  
+pydantic==2.10.3
+PyYAML==6.0.2
+python-dotenv==1.0.1
+jsonschema==4.23.0
+
+# Output & Reporting
+rich==13.9.4
+tabulate==0.9.0
+jinja2==3.1.4
+# codecs - standard library
+
+# Testing & Quality Management
+pytest==8.3.4
+pytest-asyncio==0.24.0
+pytest-mock==3.14.0
+black==24.10.0
+ruff==0.8.2
+mypy==1.13.0
+
+# Type stubs for better type checking
+types-PyYAML
+types-tabulate

@@ -1,0 +1,84 @@
+ai_models:
+  claude:
+    command: claude
+    model: claude-3-5-sonnet-latest
+    options: []
+    timeout: 90
+  default: claude
+  gemini:
+    command: gemini
+    models:
+      available:
+      - gemini-2.5-pro
+      - gemini-2.5-flash
+      - gemini-2.5-flash-lite
+      default: gemini-2.5-pro
+    options:
+    - --prompt
+    timeout: 60
+analysis:
+  extract_images: true
+  extract_tables: true
+  input_encoding: auto
+  max_file_size: 900MB
+  supported_formats:
+  - .pptx
+  - .xlsx
+  - .csv
+  - .txt
+  - .md
+cli_execution:
+  buffer_size: 4096
+  error_handling: retry
+  max_retries: 3
+  retry_delay: 2
+  shell: true
+  stream_output: true
+generation:
+  qa:
+    columns:
+    - id: QA-ID
+    - category: 分類
+    - question: 質問
+    - answer: 回答
+    - status: ステータス
+  requirements:
+    columns:
+    - id: 要件ID
+    - category: カテゴリ
+    - priority: 優先度
+    - description: 説明
+    - acceptance_criteria: 受入基準
+    criteria:
+    - security: セキュリティ
+    - performance: パフォーマンス
+    - usability: 使いやすさ
+    - scalability: 拡張性
+  tasks:
+    columns:
+    - id: タスクID
+    - title: タイトル
+    - assignee: 担当者
+    - priority: 優先度
+    - estimated_hours: 見積時間
+    - status: ステータス
+  test_cases:
+    columns:
+    - id: TC-ID
+    - category: 分類
+    - precondition: 前提条件
+    - steps: 手順
+    - expected: 期待結果
+    - priority: 優先度
+output:
+  bom: false
+  default_format: markdown
+  directory: ./output
+  encoding: shift-jis
+  line_ending: crlf
+  timestamp: true
+project:
+  description: プロジェクト概要
+  encoding: shift-jis
+  name: My Project
+  version: 1.0.0
