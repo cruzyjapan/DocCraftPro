@@ -2,6 +2,8 @@
 
 AI Dev Tool（ai-dev）は、Gemini CLIやClaude Code CLIを活用して、システム開発に必要な各種ドキュメントを自動生成するコマンドラインツールです。
 
+📦 **GitHub Repository**: https://github.com/cruzyjapan/DocCraftPro
+
 ## ✨ 主な機能
 
 ### ドキュメント生成
@@ -63,6 +65,14 @@ ai-dev status
 これで準備完了です！🎉
 
 ## 📦 詳細なインストール方法
+
+### リポジトリのクローン
+
+```bash
+# GitHubからクローン
+git clone https://github.com/cruzyjapan/DocCraftPro.git
+cd DocCraftPro
+```
 
 ### 方法1: 自動セットアップ（推奨）
 
