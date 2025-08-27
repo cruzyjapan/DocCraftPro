@@ -34,9 +34,9 @@ class ClaudeCLI(AIModelBase):
                 if opt and not opt.startswith('--temperature') and not opt.startswith('--max-tokens'):
                     cmd.insert(1, opt)  # Insert after command but before prompt
         
-        current_timeout = self.timeout
+        current_timeout = self.timeout if self.timeout else 300  # デフォルト5分
         max_retries = 3
-        timeout_multiplier = 1.5
+        timeout_multiplier = 2.0  # 2倍ずつ延長（5分→10分→20分）
         
         for attempt in range(max_retries):
             try:
@@ -61,9 +61,13 @@ class ClaudeCLI(AIModelBase):
                 if attempt < max_retries - 1:
                     old_timeout = current_timeout
                     current_timeout = int(current_timeout * timeout_multiplier)
-                    print(f"⏱️  Claude CLI timed out after {old_timeout}s. Extending to {current_timeout}s... (Attempt {attempt + 2}/{max_retries})")
+                    print(f"\n⏱️  Claude CLI timed out after {old_timeout}s.")
+                    print(f"    Extending timeout to {current_timeout}s and retrying... (Attempt {attempt + 2}/{max_retries})")
+                    print(f"    💡 Tip: Use --timeout option to set a custom timeout (e.g., --timeout 600 for 10 minutes)\n")
                     continue
                 else:
+                    print(f"\n❌ Claude CLI failed after {max_retries} attempts (max timeout: {current_timeout}s)")
+                    print(f"    💡 Try using a longer timeout: ai-dev --timeout 1200 generate ...\n")
                     raise RuntimeError(f"Command timed out after {max_retries} attempts with timeout {current_timeout}s")
             except FileNotFoundError:
                 raise RuntimeError(f"Command '{self.command}' not found. Please install Claude CLI.")

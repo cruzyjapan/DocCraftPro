@@ -29,12 +29,27 @@ console = Console()
               help='AI model to use')
 @click.option('--verbose', '-v', is_flag=True,
               help='Enable verbose output')
+@click.option('--timeout', '-t',
+              type=int,
+              help='Timeout in seconds (default: 300)')
 @click.pass_context
-def cli(ctx, config, ai, verbose):
+def cli(ctx, config, ai, verbose, timeout):
     """AI Dev Tool - System Development Support Tool"""
     ctx.ensure_object(dict)
     ctx.obj['config'] = ConfigManager(config)
-    ctx.obj['model_manager'] = ModelManager(ctx.obj['config'].get_all())
+    
+    # Apply timeout if specified
+    config_data = ctx.obj['config'].get_all()
+    if timeout:
+        # Update timeout for all models
+        if 'ai_models' in config_data:
+            for model_name in ['gemini', 'claude']:
+                if model_name in config_data['ai_models']:
+                    config_data['ai_models'][model_name]['timeout'] = timeout
+        if verbose:
+            console.print(f"[yellow]⏱️  Timeout set to {timeout} seconds[/yellow]")
+    
+    ctx.obj['model_manager'] = ModelManager(config_data)
     ctx.obj['verbose'] = verbose
     
     # Switch AI model if specified

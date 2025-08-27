@@ -20,9 +20,9 @@ class GeminiCLI(AIModelBase):
         # Gemini CLI expects --prompt parameter directly
         cmd = [self.command, "--prompt", self.format_prompt(prompt)]
         
-        current_timeout = self.timeout
+        current_timeout = self.timeout if self.timeout else 300  # デフォルト5分
         max_retries = 3
-        timeout_multiplier = 1.5
+        timeout_multiplier = 2.0  # 2倍ずつ延長（5分→10分→20分）
         
         for attempt in range(max_retries):
             try:
@@ -51,9 +51,13 @@ class GeminiCLI(AIModelBase):
                 if attempt < max_retries - 1:
                     old_timeout = current_timeout
                     current_timeout = int(current_timeout * timeout_multiplier)
-                    print(f"⏱️  Gemini CLI timed out after {old_timeout}s. Extending to {current_timeout}s... (Attempt {attempt + 2}/{max_retries})")
+                    print(f"\n⏱️  Gemini CLI timed out after {old_timeout}s.")
+                    print(f"    Extending timeout to {current_timeout}s and retrying... (Attempt {attempt + 2}/{max_retries})")
+                    print(f"    💡 Tip: Use --timeout option to set a custom timeout (e.g., --timeout 600 for 10 minutes)\n")
                     continue
                 else:
+                    print(f"\n❌ Gemini CLI failed after {max_retries} attempts (max timeout: {current_timeout}s)")
+                    print(f"    💡 Try using a longer timeout: ai-dev --timeout 1200 generate ...\n")
                     raise RuntimeError(f"Command timed out after {max_retries} attempts with timeout {current_timeout}s")
             except FileNotFoundError:
                 raise RuntimeError(f"Command '{self.command}' not found. Please install Gemini CLI.")

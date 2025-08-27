@@ -3,7 +3,7 @@ ai_models:
     command: claude
     model: claude-3-5-sonnet-latest
     options: []
-    timeout: 90  # 初期タイムアウト（最大3回まで自動延長、1.5倍ずつ）
+    timeout: 300  # 初期タイムアウト5分（最大3回まで自動延長、2倍ずつ = 最大20分）
   default: claude
   gemini:
     command: gemini
@@ -15,7 +15,7 @@ ai_models:
       default: gemini-2.5-pro
     options:
     - --prompt
-    timeout: 60  # 初期タイムアウト（最大3回まで自動延長、1.5倍ずつ）
+    timeout: 300  # 初期タイムアウト5分（最大3回まで自動延長、2倍ずつ = 最大20分）
 analysis:
   extract_images: true
   extract_tables: true
