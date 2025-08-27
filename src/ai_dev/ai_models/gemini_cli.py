@@ -15,37 +15,48 @@ class GeminiCLI(AIModelBase):
         return prompt
     
     def execute_command(self, prompt: str, encoding: str = 'shift-jis') -> str:
-        """Execute Gemini CLI command with direct prompt"""
+        """Execute Gemini CLI command with automatic timeout extension"""
         
         # Gemini CLI expects --prompt parameter directly
         cmd = [self.command, "--prompt", self.format_prompt(prompt)]
         
-        try:
-            # Execute command
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,  # Text mode for Gemini
-                timeout=self.timeout
-            )
-            
-            if result.returncode != 0:
-                raise RuntimeError(f"Command failed: {result.stderr}")
-            
-            # Clean output - remove "Loaded cached credentials." and other non-content lines
-            output_lines = result.stdout.split('\n')
-            cleaned_lines = []
-            for line in output_lines:
-                if not line.startswith('Loaded cached credentials') and \
-                   not line.startswith('Loading'):
-                    cleaned_lines.append(line)
-            
-            return '\n'.join(cleaned_lines)
-            
-        except subprocess.TimeoutExpired:
-            raise RuntimeError(f"Command timed out after {self.timeout} seconds")
-        except FileNotFoundError:
-            raise RuntimeError(f"Command '{self.command}' not found. Please install Gemini CLI.")
+        current_timeout = self.timeout
+        max_retries = 3
+        timeout_multiplier = 1.5
+        
+        for attempt in range(max_retries):
+            try:
+                # Execute command with current timeout
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,  # Text mode for Gemini
+                    timeout=current_timeout
+                )
+                
+                if result.returncode != 0:
+                    raise RuntimeError(f"Command failed: {result.stderr}")
+                
+                # Clean output - remove "Loaded cached credentials." and other non-content lines
+                output_lines = result.stdout.split('\n')
+                cleaned_lines = []
+                for line in output_lines:
+                    if not line.startswith('Loaded cached credentials') and \
+                       not line.startswith('Loading'):
+                        cleaned_lines.append(line)
+                
+                return '\n'.join(cleaned_lines)
+                
+            except subprocess.TimeoutExpired:
+                if attempt < max_retries - 1:
+                    old_timeout = current_timeout
+                    current_timeout = int(current_timeout * timeout_multiplier)
+                    print(f"⏱️  Gemini CLI timed out after {old_timeout}s. Extending to {current_timeout}s... (Attempt {attempt + 2}/{max_retries})")
+                    continue
+                else:
+                    raise RuntimeError(f"Command timed out after {max_retries} attempts with timeout {current_timeout}s")
+            except FileNotFoundError:
+                raise RuntimeError(f"Command '{self.command}' not found. Please install Gemini CLI.")
     
     def generate(self, 
                 prompt: str, 

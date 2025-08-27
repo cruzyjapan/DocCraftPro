@@ -16,7 +16,7 @@ class ClaudeCLI(AIModelBase):
         return prompt
     
     def execute_command(self, prompt: str, encoding: str = 'utf-8') -> str:
-        """Execute Claude CLI command with proper options"""
+        """Execute Claude CLI command with automatic timeout extension"""
         
         # Claude CLI expects the prompt as an argument with --print option for non-interactive mode
         # Use --output-format json for JSON responses
@@ -34,28 +34,39 @@ class ClaudeCLI(AIModelBase):
                 if opt and not opt.startswith('--temperature') and not opt.startswith('--max-tokens'):
                     cmd.insert(1, opt)  # Insert after command but before prompt
         
-        try:
-            # Execute command
-            result = subprocess.run(
-                cmd,
-                capture_output=True,
-                text=True,
-                timeout=self.timeout,
-                env={**os.environ, "CLAUDE_NONINTERACTIVE": "1"}  # Ensure non-interactive mode
-            )
-            
-            if result.returncode != 0:
-                # Check for specific error messages
-                if "API key" in result.stderr or "authentication" in result.stderr.lower():
-                    raise RuntimeError("Claude CLI authentication error. Please ensure you're logged in with 'claude login'")
-                raise RuntimeError(f"Command failed: {result.stderr}")
-            
-            return result.stdout
-            
-        except subprocess.TimeoutExpired:
-            raise RuntimeError(f"Command timed out after {self.timeout} seconds")
-        except FileNotFoundError:
-            raise RuntimeError(f"Command '{self.command}' not found. Please install Claude CLI.")
+        current_timeout = self.timeout
+        max_retries = 3
+        timeout_multiplier = 1.5
+        
+        for attempt in range(max_retries):
+            try:
+                # Execute command with current timeout
+                result = subprocess.run(
+                    cmd,
+                    capture_output=True,
+                    text=True,
+                    timeout=current_timeout,
+                    env={**os.environ, "CLAUDE_NONINTERACTIVE": "1"}  # Ensure non-interactive mode
+                )
+                
+                if result.returncode != 0:
+                    # Check for specific error messages
+                    if "API key" in result.stderr or "authentication" in result.stderr.lower():
+                        raise RuntimeError("Claude CLI authentication error. Please ensure you're logged in with 'claude login'")
+                    raise RuntimeError(f"Command failed: {result.stderr}")
+                
+                return result.stdout
+                
+            except subprocess.TimeoutExpired:
+                if attempt < max_retries - 1:
+                    old_timeout = current_timeout
+                    current_timeout = int(current_timeout * timeout_multiplier)
+                    print(f"⏱️  Claude CLI timed out after {old_timeout}s. Extending to {current_timeout}s... (Attempt {attempt + 2}/{max_retries})")
+                    continue
+                else:
+                    raise RuntimeError(f"Command timed out after {max_retries} attempts with timeout {current_timeout}s")
+            except FileNotFoundError:
+                raise RuntimeError(f"Command '{self.command}' not found. Please install Claude CLI.")
     
     def generate(self, 
                 prompt: str, 

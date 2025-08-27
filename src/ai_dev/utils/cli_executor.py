@@ -8,9 +8,11 @@ from typing import Optional, Tuple
 class CLIExecutor:
     """Execute CLI commands with retry and error handling"""
     
-    def __init__(self, max_retries: int = 3, retry_delay: int = 2):
+    def __init__(self, max_retries: int = 3, retry_delay: int = 2, auto_extend_timeout: bool = True):
         self.max_retries = max_retries
         self.retry_delay = retry_delay
+        self.auto_extend_timeout = auto_extend_timeout
+        self.timeout_multiplier = 1.5  # タイムアウトを1.5倍ずつ延長
     
     def execute(
         self, 
@@ -19,7 +21,9 @@ class CLIExecutor:
         shell: bool = False,
         capture_output: bool = True
     ) -> Tuple[int, str, str]:
-        """Execute command with retry logic"""
+        """Execute command with retry logic and automatic timeout extension"""
+        
+        current_timeout = timeout or 60  # デフォルト60秒
         
         for attempt in range(self.max_retries):
             try:
@@ -34,16 +38,23 @@ class CLIExecutor:
                     shell=shell,
                     capture_output=capture_output,
                     text=True,
-                    timeout=timeout
+                    timeout=current_timeout
                 )
                 
                 return result.returncode, result.stdout, result.stderr
                 
             except subprocess.TimeoutExpired as e:
                 if attempt < self.max_retries - 1:
-                    print(f"Command timed out. Retrying... (Attempt {attempt + 2}/{self.max_retries})")
+                    # タイムアウトを自動延長
+                    if self.auto_extend_timeout:
+                        old_timeout = current_timeout
+                        current_timeout = int(current_timeout * self.timeout_multiplier)
+                        print(f"Command timed out after {old_timeout}s. Extending timeout to {current_timeout}s and retrying... (Attempt {attempt + 2}/{self.max_retries})")
+                    else:
+                        print(f"Command timed out. Retrying... (Attempt {attempt + 2}/{self.max_retries})")
                     time.sleep(self.retry_delay)
                 else:
+                    print(f"Command failed after {self.max_retries} attempts with timeout {current_timeout}s")
                     raise e
             except Exception as e:
                 if attempt < self.max_retries - 1:
