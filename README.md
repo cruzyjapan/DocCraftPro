@@ -46,7 +46,7 @@ sudo apt install -y python3.12-venv
 
 ```bash
 # 自動セットアップスクリプトを実行
-bash .init.sh
+bash setup.sh
 
 # 途中で「Do you want to recreate it? (y/N):」と聞かれたら、Nを押してEnter
 # 最後に「Do you want to activate the virtual environment now? (Y/n):」と聞かれたら、Yを押してEnter
@@ -82,7 +82,7 @@ sudo apt update
 sudo apt install -y python3.12-venv
 
 # 2. 自動セットアップスクリプトを実行
-bash .init.sh
+bash setup.sh
 
 # このスクリプトは以下を自動で行います：
 # - Python仮想環境の作成
@@ -160,15 +160,15 @@ sudo apt install python3.11-venv
 sudo apt install python3.10-venv
 ```
 
-### エラー: "init.sh: command not found"
+### エラー: "setup.sh: command not found"
 
 ```bash
 # bashで実行
-bash .init.sh
+bash setup.sh
 
 # または実行権限を付与してから実行
-chmod +x .init.sh
-./.init.sh
+chmod +x setup.sh
+./setup.sh
 ```
 
 ### エラー: "ai-dev: command not found"
@@ -179,6 +179,9 @@ source venv/bin/activate
 
 # または、仮想環境内で再インストール
 pip install -e .
+
+# または、bashrcを再読み込み（エイリアス設定済みの場合）
+source ~/.bashrc
 ```
 
 ### Pythonバージョンの確認
@@ -200,6 +203,9 @@ source venv/bin/activate
 
 # または便利スクリプトを使用
 ./activate.sh
+
+# setup.shでエイリアスを設定した場合は、直接実行可能
+ai-dev --help
 ```
 
 ### 2. サンプルドキュメントの生成
@@ -337,7 +343,8 @@ make clean-all     # 全てクリーンアップ（venv含む）
 
 ```
 DocCraftPro/
-├── .init.sh           # 自動セットアップスクリプト
+├── setup.sh           # 自動セットアップスクリプト
+├── .init.sh           # 旧セットアップスクリプト（非推奨）
 ├── requirements.txt   # Pythonパッケージ一覧
 ├── setup.py          # パッケージ設定
 ├── Makefile          # Make コマンド定義
@@ -389,10 +396,13 @@ A: WSL2（Windows Subsystem for Linux）を使用してください。WSL2のUbu
 
 ### Q: 仮想環境を有効化し忘れる
 
-A: `.bashrc`に以下を追加すると、ディレクトリに入った時に自動で有効化されます：
+A: `setup.sh`を実行すると、自動的にエイリアスが設定されます。または手動で`.bashrc`に以下を追加できます：
 
 ```bash
-# .bashrcに追加
+# .bashrcに追加（setup.shで自動設定済み）
+alias ai-dev='source ~/DEV/self-directed_ai_team_development/DocCraftPro/venv/bin/activate && ai-dev'
+
+# または、ディレクトリに入った時に自動で有効化
 cd() {
     builtin cd "$@"
     if [ -f venv/bin/activate ]; then

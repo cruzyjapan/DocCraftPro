@@ -48,13 +48,28 @@ echo ""
 echo "Initializing configuration..."
 python3 -m ai_dev.cli init
 
+# Add alias to bashrc for convenience
+echo ""
+echo "Setting up ai-dev alias in ~/.bashrc..."
+ALIAS_LINE="alias ai-dev='source $(pwd)/venv/bin/activate && ai-dev'"
+if ! grep -q "alias ai-dev=" ~/.bashrc; then
+    echo "$ALIAS_LINE" >> ~/.bashrc
+    echo "✅ Alias added to ~/.bashrc"
+else
+    echo "ℹ️  Alias already exists in ~/.bashrc"
+fi
+
 echo ""
 echo "========================================="
 echo "Setup completed successfully!"
 echo "========================================="
 echo ""
-echo "To activate the virtual environment, run:"
+echo "To activate the virtual environment manually, run:"
 echo "  source venv/bin/activate"
+echo ""
+echo "Or use the ai-dev command directly after reloading bashrc:"
+echo "  source ~/.bashrc"
+echo "  ai-dev --help"
 echo ""
 echo "To get started, try:"
 echo "  ai-dev status"
