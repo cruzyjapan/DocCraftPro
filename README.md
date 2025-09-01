@@ -31,54 +31,50 @@ AI Dev Tool（ai-dev）は、Gemini CLIやClaude Code CLIを活用して、シ�
 
 ## 🚀 クイックスタート（初めての方向け）
 
-### ステップ1: 必要なパッケージをインストール
+### 完全な手順（GitHubからクローンする場合）
 
 ```bash
-# Pythonの仮想環境パッケージをインストール（sudoパスワードが必要）
-sudo apt update
-sudo apt install -y python3.12-venv
+# 1. リポジトリをクローン
+git clone https://github.com/cruzyjapan/DocCraftPro.git
+cd DocCraftPro
 
-# もしPython 3.12がない場合は、お使いのPythonバージョンに合わせて変更
-# 例: sudo apt install -y python3.11-venv
-```
+# 2. スクリプトに実行権限を付与
+chmod +x setup.sh activate.sh
 
-### ステップ2: 自動セットアップを実行
-
-```bash
-# 自動セットアップスクリプトを実行
+# 3. セットアップを実行
 bash setup.sh
 
 # セットアップ中の対話的プロンプト:
-# 1. 「Configuration file already exists. Overwrite? [y/N]:」→ N を押してEnter
-# 2. 「Would you like to test ai-dev now? (Y/n):」→ Y を押してEnter
-# 3. 表示されたコマンドをコピー&ペーストして実行:
-#    source ~/.bashrc && ai-dev status
+# - 「Configuration file already exists. Overwrite? [y/N]:」→ N を押してEnter
+# - 「Would you like to test ai-dev now? (Y/n):」→ Y を押してEnter
+
+# 4. ai-devコマンドを有効化（以下のいずれか）
+source ~/.bashrc        # エイリアスを読み込む（推奨）
+# または
+source activate.sh      # 仮想環境を有効化
+
+# 5. 動作確認
+ai-dev status
+ai-dev --help
 ```
 
-### ステップ3: 動作確認
+### すでにクローン済みの場合
 
 ```bash
-# setup.shの最後で表示されたコマンドを実行
-source ~/.bashrc && ai-dev status
+# 1. 必要なパッケージをインストール
+sudo apt update
+sudo apt install -y python3.12-venv
 
-# または新しいターミナルを開いて実行
-ai-dev --help
+# 2. セットアップを実行
+bash setup.sh
+
+# 3. ai-devを有効化して使用
+source ~/.bashrc && ai-dev status
 ```
 
 これで準備完了です！🎉
 
 ## 📦 詳細なインストール方法
-
-### リポジトリのクローン
-
-```bash
-# GitHubからクローン
-git clone https://github.com/cruzyjapan/DocCraftPro.git
-cd DocCraftPro
-
-# 実行権限を付与（初回のみ）
-chmod +x setup.sh activate.sh
-```
 
 ### 方法1: 自動セットアップ（推奨）
 
@@ -183,14 +179,21 @@ chmod +x setup.sh
 ### エラー: "ai-dev: command not found"
 
 ```bash
-# 仮想環境が有効になっているか確認
-source venv/bin/activate
-
-# または、仮想環境内で再インストール
-pip install -e .
-
-# または、bashrcを再読み込み（エイリアス設定済みの場合）
+# 解決方法1: bashrcを再読み込み（エイリアス設定済みの場合）
 source ~/.bashrc
+ai-dev --help
+
+# 解決方法2: activate.shスクリプトを使用
+source activate.sh
+ai-dev --help
+
+# 解決方法3: 手動で仮想環境を有効化
+source venv/bin/activate
+ai-dev --help
+
+# 解決方法4: 仮想環境内で再インストール
+source venv/bin/activate
+pip install -e .
 ```
 
 ### Pythonバージョンの確認
