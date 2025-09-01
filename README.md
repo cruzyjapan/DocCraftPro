@@ -48,18 +48,21 @@ sudo apt install -y python3.12-venv
 # 自動セットアップスクリプトを実行
 bash setup.sh
 
-# 途中で「Do you want to recreate it? (y/N):」と聞かれたら、Nを押してEnter
-# 最後に「Do you want to activate the virtual environment now? (Y/n):」と聞かれたら、Yを押してEnter
+# セットアップ中の対話的プロンプト:
+# 1. 「Configuration file already exists. Overwrite? [y/N]:」→ N を押してEnter
+# 2. 「Would you like to test ai-dev now? (Y/n):」→ Y を押してEnter
+# 3. 表示されたコマンドをコピー&ペーストして実行:
+#    source ~/.bashrc && ai-dev status
 ```
 
 ### ステップ3: 動作確認
 
 ```bash
-# ツールが正しくインストールされたか確認
-ai-dev --help
+# setup.shの最後で表示されたコマンドを実行
+source ~/.bashrc && ai-dev status
 
-# ツールの状態を確認
-ai-dev status
+# または新しいターミナルを開いて実行
+ai-dev --help
 ```
 
 これで準備完了です！🎉
@@ -88,8 +91,11 @@ bash setup.sh
 # - Python仮想環境の作成
 # - 必要なパッケージのインストール
 # - 設定ファイルの初期化
-# - サンプルファイルの作成
-# - 便利なスクリプトの生成
+# - ~/.bashrcにai-devエイリアスを追加
+# - 対話的なテストプロンプトを表示
+
+# 3. セットアップ完了後、表示されたコマンドを実行
+source ~/.bashrc && ai-dev status
 ```
 
 ### 方法2: Makefileを使用
@@ -195,16 +201,17 @@ python3 --version
 
 ## 🎯 基本的な使い方
 
-### 1. 仮想環境の有効化
+### 1. ai-devコマンドの実行
 
 ```bash
-# 毎回、ツールを使う前に実行
+# setup.shでエイリアスが設定済みの場合（推奨）
+ai-dev --help
+
+# エイリアスが未設定の場合は、まず以下を実行
+source ~/.bashrc
+
+# または手動で仮想環境を有効化
 source venv/bin/activate
-
-# または便利スクリプトを使用
-./activate.sh
-
-# setup.shでエイリアスを設定した場合は、直接実行可能
 ai-dev --help
 ```
 
