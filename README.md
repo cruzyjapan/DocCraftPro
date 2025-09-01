@@ -75,6 +75,9 @@ ai-dev --help
 # GitHubからクローン
 git clone https://github.com/cruzyjapan/DocCraftPro.git
 cd DocCraftPro
+
+# 実行権限を付与（初回のみ）
+chmod +x setup.sh activate.sh
 ```
 
 ### 方法1: 自動セットアップ（推奨）
@@ -209,6 +212,11 @@ ai-dev --help
 
 # エイリアスが未設定の場合は、まず以下を実行
 source ~/.bashrc
+ai-dev --help
+
+# または便利スクリプトを使用（仮想環境を自動的に有効化）
+source activate.sh
+ai-dev --help
 
 # または手動で仮想環境を有効化
 source venv/bin/activate
@@ -351,6 +359,7 @@ make clean-all     # 全てクリーンアップ（venv含む）
 ```
 DocCraftPro/
 ├── setup.sh           # 自動セットアップスクリプト
+├── activate.sh        # 仮想環境有効化ヘルパースクリプト
 ├── .init.sh           # 旧セットアップスクリプト（非推奨）
 ├── requirements.txt   # Pythonパッケージ一覧
 ├── setup.py          # パッケージ設定
