@@ -46,7 +46,7 @@ bash setup.sh
 
 # セットアップ中の対話的プロンプト:
 # - 「Configuration file already exists. Overwrite? [y/N]:」→ N を押してEnter
-# - 「Would you like to test ai-dev now? (Y/n):」→ Y を押してEnter
+# - 「Would you like to test ai-dev now? (Y/n):」→ Y を押してEnter（任意）
 
 # 4. ai-devコマンドを有効化（以下のいずれか）
 source ~/.bashrc        # エイリアスを読み込む（推奨）
@@ -87,10 +87,12 @@ sudo apt install -y python3.12-venv
 bash setup.sh
 
 # このスクリプトは以下を自動で行います：
+# - python3-venvのインストール（sudo必要）
 # - Python仮想環境の作成
 # - 必要なパッケージのインストール
+# - ai-devツールのインストール
 # - 設定ファイルの初期化
-# - ~/.bashrcにai-devエイリアスを追加
+# - ~/.bashrcにエイリアスを自動追加
 # - 対話的なテストプロンプトを表示
 
 # 3. セットアップ完了後、表示されたコマンドを実行
@@ -226,23 +228,7 @@ source venv/bin/activate
 ai-dev --help
 ```
 
-### 2. サンプルドキュメントの生成
-
-```bash
-# サンプル入力ファイルはすでに作成されています
-ls sample_input*.txt
-
-# 要件定義書を生成
-ai-dev generate requirements sample_input.txt
-
-# テストケースを生成
-ai-dev generate test-cases sample_input.txt
-
-# 生成されたファイルを確認
-ls output/
-```
-
-### 3. 自分のドキュメントを生成
+### 2. ドキュメントを生成
 
 ```bash
 # 1. 入力テキストファイルを作成
@@ -311,7 +297,7 @@ ai-dev generate requirements my_project.txt -f html -e utf-8
 | モデル | 提供元 | 特徴 | インストールコマンド |
 |--------|--------|------|-------------------|
 | Gemini | Google | 高速、日本語対応良好 | `npm install -g @google/generative-ai-cli` |
-| Claude | Anthropic | 高品質、詳細な出力 | `npm install -g @anthropic/claude-cli` |
+| Claude | Anthropic | 高品質、詳細な出力 | Claude公式ツールを使用 |
 
 ### モデルの切り替え
 
@@ -329,16 +315,9 @@ ai-dev use claude
 ai-dev --ai claude generate requirements input.txt -e utf-8
 ```
 
-### セットアップ
+### AIモデルのセットアップ
 
-```bash
-# Gemini CLIのセットアップ
-gemini --version
-
-# Claude CLIのセットアップ
-claude login  # ブラウザで認証
-```
-
+ai-devツールが動作するためには、GeminiまたはClaudeのCLIツールが必要です。
 詳細は[Claude Setup Guide](CLAUDE_SETUP.md)を参照してください。
 
 ## 🛠️ 開発者向けコマンド
@@ -381,12 +360,15 @@ DocCraftPro/
 
 ## ⚠️ 既知の問題と対処法
 
-### Gemini CLIのインストール
+### AI CLIツールのインストール
 
-Gemini CLIは別途インストールが必要です：
+GeminiまたはClaude CLIは別途インストールが必要です：
 ```bash
-# Node.jsが必要
+# Gemini CLI (Node.jsが必要)
 npm install -g @google/generative-ai-cli
+
+# Claude CLI（Anthropicの公式ツールを使用）
+# https://docs.anthropic.com/claude/docs を参照
 ```
 
 ### エンコーディングについて
@@ -452,4 +434,4 @@ MIT License
 
 ## 📞 サポート
 
-問題や質問がある場合は、[GitHub Issues](https://github.com/yourusername/ai-dev-tool/issues)ページを使用してください。
+問題や質問がある場合は、[GitHub Issues](https://github.com/cruzyjapan/DocCraftPro/issues)ページを使用してください。
